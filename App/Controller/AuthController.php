@@ -1,5 +1,6 @@
 <?php
-class AutorizacaoController {
+// AuthController.php
+class AuthController {
     public function checkLogin() {
         session_start();
         // Verifica se a variável de sessão 'user_id' existe

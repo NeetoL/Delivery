@@ -40,27 +40,7 @@ class GetModel extends BaseModel {
     public function getItens() {
         $itens = [];
         try {
-            $query = "SELECT 
-                            i.id,
-                            i.nome,
-                            i.preco,
-                            c.nome AS categoria,
-                            CONCAT('[', 
-                                GROUP_CONCAT(
-                                    CONCAT(
-                                        '{\"nome\": \"', IFNULL(ing.nome, ''), '\",',
-                                        '\"quantidade\": ', IFNULL(ing.quantidade, 0), '}'
-                                    )
-                                ), 
-                            ']') AS ingredientes
-                        FROM 
-                            itens i
-                        INNER JOIN 
-                            categorias c ON c.id = i.categoria_id
-                        LEFT JOIN 
-                            ingredientes ing ON i.id = ing.itemId
-                        GROUP BY 
-                            i.id, i.nome, i.preco, c.nome";
+            $query = "CALL GetItensComIngredientes()";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             $itens = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -162,6 +142,7 @@ class DeleteModel extends BaseModel {
             $queryCategoria = "DELETE FROM categorias WHERE id =".$id;
             $stmtCategoria = $this->conn->prepare($queryCategoria);
             $stmtCategoria->bindParam(':id', $id, PDO::PARAM_INT);
+            header('Content-Type: application/json');
             $stmtCategoria->execute();
     
             // Verifica se a categoria foi excluída
@@ -202,6 +183,7 @@ class DeleteModel extends BaseModel {
             ]);
         }
     }
+
 
     public function deletarUsuario($id) {
         try {

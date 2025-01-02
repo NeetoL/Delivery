@@ -4,12 +4,12 @@ async function fetchData(url, errorMessage, method = 'GET', body = null) {
             const options = {
                 method,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
             };
             
             if (body) {
-                options.body = JSON.stringify(body); // Adiciona o corpo apenas se necessário
+                options.body = JSON.stringify(body);
             }
             const response = await fetch(url, options);
             if (!response.ok) throw new Error(`${errorMessage}: ${response.statusText}`);
@@ -25,6 +25,10 @@ async function fetchData(url, errorMessage, method = 'GET', body = null) {
 // GET
 async function obterCategorias() {
     return await fetchData('/getCategorias', 'Erro ao obter categorias');
+}
+
+async function obterItens() {
+    return await fetchData('/getItens', 'Erro ao obter itens');
 }
 
 async function obterUsuarios() {
@@ -57,7 +61,7 @@ async function showCategoriasItens() {
         }, {});
     
         Object.keys(categoriasAgrupadas).forEach(categoriaNome => {
-            const categoria = categoriasAgrupadas[categoriaNome][0]; 
+            const categoria = categoriasAgrupadas[categoriaNome][0];
             const categoriaId = categoria.id;
             const categoriaRow = document.createElement('tr');
             categoriaRow.classList.add('treeview');
@@ -167,6 +171,7 @@ async function showCategoriasItens() {
                     }
                 });
         
+                // Alterna o ícone da seta
                 if (isExpanded) {
                     arrow.classList.remove('fa-caret-right');
                     arrow.classList.add('fa-caret-down');
@@ -191,12 +196,12 @@ async function showHistoricoPedidos(){
     
         clearTables();
         $.ajax({
-            url: '/getPedidos',
-            method: 'GET',
+            url: '/getPedidos', // URL da rota
+            method: 'GET', // Método HTTP
             success: function (response) {
                 if (response.data && response.data.length > 0) {
                     const pedidosContainer = $('#historicoPedidoTable');
-                    pedidosContainer.empty();
+                    pedidosContainer.empty(); // Limpa o container
                     var infoUsuario = [];
                     var infoPedido = [];
                     todosPedidos = response;
@@ -235,6 +240,7 @@ async function showHistoricoPedidos(){
                 }
             },
             error: function (xhr, status, error) {
+                // Manipula erros na requisição
                 console.error('Erro ao obter pedidos:', error);
                 $('#pedidos-container').html('<p>Erro ao carregar os pedidos. Tente novamente mais tarde.</p>');
             }
@@ -278,8 +284,9 @@ async function obterDashboardData() {
         const data = await response.json();
         debugger;
         if (data.status === 'success') {
+            // Atualizar os valores no painel com os dados recebidos
             document.getElementById('pedidosPendentes').textContent = data.data.total_pendentes;
-            document.getElementById('totalCaixa').textContent = `R$ ${data.data.total_caixa || '0,00'}`;
+            document.getElementById('totalCaixa').textContent = `R$ ${data.data.total_caixa || "0,00"}`;
             document.getElementById('pedidosDia').textContent = data.data.total_hoje;
             document.getElementById('pedidosCancelados').textContent = data.data.total_cancelados;
         } else {

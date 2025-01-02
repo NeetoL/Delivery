@@ -42,7 +42,6 @@
     
         clearTables();
         const itensData = await obterItens();
-        debugger;
         const categoriasData = await obterCategorias();
     
         const itensTable = document.getElementById('itensTable');

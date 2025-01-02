@@ -1,4 +1,5 @@
 <?php
+// Função para renderizar a página
 function renderPage($page) {
     $path = "App/Views/{$page}";
     
@@ -11,8 +12,9 @@ function renderPage($page) {
     }
 }
 
+// Incluir os controladores
 include 'App/Controller/AuthController.php';
-$authController = new AutorizacaoController();
+$authController = new AuthController();
 
 include 'App/Controller/PainelController.php';
 $PainelController = new PainelController();
@@ -74,7 +76,7 @@ switch ($path) {
 
     case '/deleteUsuario':
         if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-            $PainelController->deleteUsuario();
+            $PainelController->deleteUsuario($id);
         }
         break;
 
@@ -139,7 +141,6 @@ switch ($path) {
         $PainelController->Notificacao();
         break;
     default:
-        // Caso a URL não corresponda a nenhuma rota, retorna um erro 404
         http_response_code(404);
         echo "<h1>Erro 404</h1>";
         echo "<p>Página não encontrada.</p>";

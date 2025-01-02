@@ -1,7 +1,20 @@
 <?php
 include('App/Models/getModel.php');
 
-class PainelController {   
+class PainelController {
+    
+    public function checkLogin() {
+        $authController = new AuthController();
+        
+        if (!$authController->checkLogin()) {
+            header('Content-Type: application/json', true, 401);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Você precisa estar logado para acessar esta página.'
+            ]);
+            exit();
+        }
+    }
     
     public function getCategorias() {
         try {
@@ -26,8 +39,7 @@ class PainelController {
     
     public function getUsuarios() {
         try {
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
             
             $model = new GetModel();
             $usuarios = $model->getUsuarios();
@@ -138,8 +150,7 @@ class PainelController {
 
     public function updateItem($id, $dados) {
         try {
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
     
             $model = new UpdateModel();
             $success = $model->atualizarItem($id, $dados);
@@ -161,8 +172,7 @@ class PainelController {
     public function updateCategoria() {
         try {
 
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
             
             $dados = json_decode(file_get_contents('php://input'), true);
             if (!isset($dados['id'])) {
@@ -189,8 +199,7 @@ class PainelController {
     
     public function updateUsuario($id, $dados) {
         try {
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
     
             $model = new UpdateModel();
             $success = $model->atualizarUsuario($id, $dados);
@@ -211,8 +220,7 @@ class PainelController {
 
     public function deleteItem() {
         try {
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
     
             $model = new DeleteModel();
             
@@ -233,8 +241,7 @@ class PainelController {
     public function deleteCategoria() {
         try {
     
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
     
             $model = new DeleteModel();
     
@@ -272,11 +279,9 @@ class PainelController {
         }
     }
     
-    public function deleteUsuario() {
-        $id = $_POST['id'] ?? '';
+    public function deleteUsuario($id) {
         try {
-            $auth = new AutorizacaoController();
-            $auth->checkLogin();
+            $this->checkLogin();
     
             $model = new DeleteModel();
             $success = $model->deletarUsuario($id);
@@ -394,7 +399,7 @@ class PainelController {
         ];
     
         // Definindo o diretório onde as transações serão salvas
-        $transactionDir = "../transactions/";
+        $transactionDir = "../App/transactions/";
     
         // Verificar se o diretório existe, se não, criar
         if (!file_exists($transactionDir)) {
@@ -408,7 +413,6 @@ class PainelController {
         // Exibe a resposta como JSON
         echo json_encode($arr);
     }
-    
     
     public function Notificacao() {
         $body = file_get_contents('php://input');
@@ -453,5 +457,6 @@ class PainelController {
             ]);
         }
     }
+
 }
 ?>
