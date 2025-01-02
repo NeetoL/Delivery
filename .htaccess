@@ -1,0 +1,51 @@
+# Ativar reescrita de URL
+RewriteEngine On
+
+# Definir a base do projeto
+RewriteBase /
+
+# Redirecionar para a página de login se não estiver logado
+RewriteCond %{REQUEST_URI} ^/painel$
+RewriteCond %{HTTP_COOKIE} !^.*PHPSESSID.*$
+RewriteRule ^(.*)$ /login [L,R=301]
+
+# Reescrever URLs amigáveis para suas páginas PHP
+RewriteRule ^$ /index.php [L]
+RewriteRule ^login$ /login.php [L]
+RewriteRule ^painel$ /painel.php [L]
+
+# Redirecionar para o index.php em caso de página não encontrada
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php [L]
+
+# Permitir CORS para todos os domínios
+Header set Access-Control-Allow-Origin "*"
+
+# Permitir os métodos HTTP
+Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+
+# Permitir os cabeçalhos necessários
+Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+# Responder a requisições OPTIONS
+<IfModule mod_headers.c>
+    # Se a requisição for OPTIONS, apenas responda e não processe mais
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Abaixo, permitimos que as URLs com parâmetros funcionem normalmente:
+# Esse padrão permite que o PHP capture parâmetros, como ?payment_status=approved
+RewriteCond %{REQUEST_URI} ^/successpagamento$
+RewriteCond %{QUERY_STRING} payment_status=approved
+RewriteRule ^successpagamento$ /index.php?payment_status=approved [L]
+
+RewriteCond %{REQUEST_URI} ^/erropagamento$
+RewriteCond %{QUERY_STRING} payment_status=rejected
+RewriteRule ^erropagamento$ /index.php?payment_status=rejected [L]
+
+RewriteCond %{REQUEST_URI} ^/pendentepagamento$
+RewriteCond %{QUERY_STRING} payment_status=pending
+RewriteRule ^pendentepagamento$ /index.php?payment_status=pending [L]

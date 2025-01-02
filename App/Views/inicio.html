@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout com Sidebar, Main e Carrinho no Footer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Adiciona o FontAwesome para os ícones -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="App/Views/css/styles.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <aside class="front-sidebar">
+            <div class="brand">
+                <h1>Logo</h1>
+            </div>
+            <ul id="sidebar-menu" class="front-sidemenu">
+                <!-- As categorias serão carregadas aqui via JavaScript -->
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <h2>Itens Disponíveis</h2>
+            <div id="menu-grid" class="menu-grid">
+                <!-- Os itens da categoria selecionada serão carregados aqui -->
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="cart-container">
+                <!-- Resumo do Carrinho -->
+                <div class="cart-summary-section">
+                    <div class="cart-total">
+                        <p>Total: <strong id="total-price">R$ 0,00</strong></p>
+                    </div>
+                    <div class="cart-actions">
+                        <button class="pay-btn" id="finalizarPedido">Ver Sacola</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="modalPagamento" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalPagamento()">&times;</span>
+            <!-- Informações do usuário -->
+            <div class="user-info">
+                <div class="row">
+                    <!-- Nome e Email -->
+                    <div class="col-md-6">
+                        <label for="name">Nome:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Digite seu nome" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu email" />
+                    </div>
+                </div>
+                <div class="row" id="divEndereco">
+                    <!-- Endereço e Número -->
+                    <div class="col-md-6">
+                        <label for="address">Endereço:</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Digite seu endereço" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="number">Número:</label>
+                        <input type="text" class="form-control" id="number" name="number" placeholder="Digite o número" />
+                    </div>
+                </div>
+                <div class="row" id="divReferencia">
+                    <!-- Complemento e Referência -->
+                    <div class="col-md-6">
+                        <label for="complement">Complemento:</label>
+                        <input type="text" class="form-control" id="complement" name="complement" placeholder="Digite o complemento" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="reference">Referência:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="reference" name="reference" placeholder="Digite a referência" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loadingMessage" style="display: none; text-align: center; margin-top: 20px;">
+                <p style="font-size: 18px; color: #333;">Gerando QR Code, por favor aguarde...</p>
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        
+                
+            <!-- Contagem Regressiva -->
+            <div id="countdown" style="font-size: 20px; color: red; display: none;">
+                Tempo restante: <span id="timer">05:00</span>
+            </div>
+            
+            
+            <div class="paymentData" hidden>
+                <h1>Dados para pagamento</h1>
+                <img src="" id="qr_code_img" style="max-width:250px; margin-bottom: 10px;" alt="QR Code"><br>
+                
+                <!-- Título "Copia e Cola" acima do input -->
+                <div style="text-align: center; margin-bottom: 5px; font-weight: bold; color: #333;">
+                    Copia e Cola:
+                </div>
+            
+                <!-- Campo de entrada com botão de copiar -->
+                <div style="align-items: center; margin-top: 10px;">
+                    <input value="" id="qr_code_cp" style="max-width: 600px; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" readonly>
+                    <button id="copiaecola" onclick="copiarQRCode()" style="margin-left: 5px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; padding: 8px 10px; cursor: pointer;">
+                        <img src="https://img.icons8.com/ios-filled/24/ffffff/copy.png" alt="Copiar" style="width: 20px; vertical-align: middle;">
+                    </button>
+                </div>
+            </div>
+    
+            
+            <div class="paymentApproved" hidden style="text-align: center; padding: 20px; border: 2px solid #4CAF50; border-radius: 10px; background-color: #f9f9f9;">
+                <!-- Ícone de sucesso -->
+                <img src="https://img.icons8.com/color/96/000000/checked--v1.png" alt="Pagamento aprovado" style="width: 100px; margin-bottom: 20px;">
+                
+                <!-- Título de confirmação -->
+                <h1 style="color: #4CAF50; font-size: 24px; margin-bottom: 10px;">Pagamento Aprovado!</h1>
+                
+                <!-- Mensagem informativa -->
+                <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Obrigado pela sua compra! Aqui estão os dados do seu pagamento:</p>
+                
+                <div class="payment-success">
+                    <button 
+                        class="payment-success-modal" 
+                        style="
+                            background-color: #28a745;
+                            color: #fff;
+                            padding: 12px 25px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 1.2em;
+                            cursor: pointer;
+                            transition: background-color 0.3s ease, box-shadow 0.3s ease;" 
+                        onclick="encerrarCompra()">
+                        <i class="fas fa-shopping-cart"></i> Encerrar compra
+                    </button>
+                </div>
+            </div>
+    
+        
+            <h3 id="total-compra">Total: R$ 0,00</h3>
+            
+            <!-- Opções de Pagamento -->
+            <div class="payment-options">
+                <button class="payment-option" id="cardPayment">
+                    <i class="fas fa-credit-card"></i> Pagar com PIX
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Escolher Método -->
+    <div id="modalEscolherMetodo" style="display:none" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalEscolherMetodo()">&times;</span>
+            <h2>Escolha uma opção</h2>
+            <div class="options">
+                <div class="menu-card" onclick="escolhaModal('delivery')">
+                    <img src="https://www.imagensempng.com.br/wp-content/uploads/2021/06/02-25.png" alt="ketchup">
+                    <div class="card-details">
+                        <h3>Delivery</h3>
+                        <p>Receba o pedido em casa</p>
+                    </div>
+                </div>
+                <div class="menu-card" onclick="escolhaModal('mesa')">
+                    <img src="https://www.imagensempng.com.br/wp-content/uploads/2021/06/02-25.png" alt="ketchup">
+                    <div class="card-details">
+                        <h3>Comer no Local</h3>
+                        <p>Coma no nosso restaurante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Finalizar Compra -->
+    <div id="modalFinalizarCompra" style="display:none" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModalFinalizar()">&times;</span>
+            <h2>Resumo da Compra</h2>
+            <div id="resumo-compra"></div>
+            <p><strong>Total: </strong><span id="total-compraFinal"></span></p>
+            <div class="modal-actions">
+                <button onclick="fecharModalFinalizar()">Cancelar</button>
+                <button onclick="casaDelivery()">Confirmar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ingredientes -->
+    <div id="modalIngredientes" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Escolha os Ingredientes</h2>
+            <ul id="ingredientes-lista">
+                <!-- Ingredientes vão aparecer aqui -->
+            </ul>
+            <button class="addCarrinho-btn" onclick="adicionarAoCarrinho()">Adicionar ao Carrinho</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="App/Views/Js/fetch.js"></script>
+    <script src="App/Views/Js/script.js"></script>
+    <script>
+        let informacoesUsuario = [];
+        var idPedido = "";
+
+        function fecharModalEscolherMetodo() {
+            document.getElementById("modalEscolherMetodo").style.display = "none";
+        }        
+
+        function createPayment() {
+            informacoesUsuario = JSON.parse(localStorage.getItem('informacoesUsuario'));
+            const totalPedido = informacoesUsuario.total.replace("R$ ", "");
+            debugger;
+            gravarPedido(carrinho, informacoesUsuario,totalPedido);
+            // Exibe o carregamento e esconde o restante
+            document.getElementById("loadingMessage").style.display = "block";
+            document.querySelector(".user-info").hidden = true;
+            document.querySelector(".payment-options").hidden = true;
+            document.getElementById("countdown").style.display = "none";
+            document.querySelector(".paymentData").hidden = true;
+            const body = {
+                name: informacoesUsuario.name,
+                email: informacoesUsuario.email,
+                value: "0.01"//informacoesUsuario.total
+            };
+            $.post("/criar", body, (data, status) => {
+                debugger;
+                data = JSON.parse(data);
+                if (data.id != undefined) {
+                    // Atualiza as informações do QR Code
+                    document.getElementById("qr_code_img").src = "data:image/png;base64," + data.qr_code_base64;
+                    document.getElementById("qr_code_cp").value = data.qr_code;
+        
+                    // Exibe os dados de pagamento e esconde o carregamento
+                    document.getElementById("loadingMessage").style.display = "none";
+                    document.querySelector(".paymentData").hidden = false;
+                    document.querySelector("#cardPayment").hidden = true;
+        
+                    // Configura a contagem regressiva e verifica o pagamento
+                    const paymentReference = data.id;
+                    startCountdown(5 * 60);
+                    checkPaymentInterval(paymentReference);
+        
+                    // Exibe a contagem regressiva
+                    document.getElementById('countdown').style.display = 'block';
+                } else {
+                    alert("Erro ao gerar o pagamento. Tente novamente.");
+                    // Restaura a interface caso ocorra um erro
+                    document.getElementById("loadingMessage").style.display = "none";
+                    document.querySelector(".user-info").hidden = false;
+                    document.querySelector(".payment-options").hidden = false;
+                }
+            });
+
+            function checkPaymentInterval(ref) {
+                setTimeout(() => {
+                    const notificationData = {
+                        action: "payment.updated",
+                        api_version: "v1",
+                        data: { id: ref },
+                        date_created: new Date().toISOString(),
+                        id: ref,
+                        live_mode: true,
+                        type: "payment",
+                        user_id: 583963771
+                    };
+                    $.ajax({
+                        url: "/notificacao", 
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(notificationData),
+                        success: (data, status) => {
+                            data = JSON.parse(data);
+                            // Se o status for aprovado
+                            if (data.status === "approved") {
+                                document.querySelector(".paymentData").hidden = true;
+                                document.querySelector(".paymentApproved").hidden = false;
+                                document.getElementById('countdown').style.display = 'none';
+                                document.getElementById('total-compra').style.display = 'none';
+                                localStorage.removeItem('informacoesUsuario');
+                                localStorage.removeItem('carrinho');
+                                statusPedido(idPedido, 'Aprovado');
+                            } else {
+                                checkPaymentInterval(ref);
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            console.error('Erro na requisição: ', error);
+                        }
+                    });
+                }, 10e3); // Intervalo de 10 segundos
+            }
+        }
+        
+        function statusPedido(id, status) {
+            $.ajax({
+                url: '/updatePedido',
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: id,
+                    status: status
+                }),
+                success: function(data, status) {
+                },
+                error: function(xhr, status, error) {
+                    // Aqui você pode tratar o erro da requisição
+                    console.error("Erro ao atualizar o pedido:", error);
+                }
+            });
+        }
+
+        function gravarPedido(itensCarrinho, InformacoesUsuario,total){
+            $.post("/gravarPedido",
+                { 
+                    itensCarrinho: JSON.stringify(itensCarrinho), 
+                    InformacoesUsuario: JSON.stringify(InformacoesUsuario), 
+                    total:total
+                }, 
+                (data, status) => {
+                    var dados = JSON.parse(data);
+                    idPedido = dados.id;
+                }
+            );
+
+        }
+
+        function startCountdown(seconds) {
+            let remainingTime = seconds;
+            const timerElement = document.getElementById('timer');
+            
+            const interval = setInterval(() => {
+                let minutes = Math.floor(remainingTime / 60);
+                let seconds = remainingTime % 60;
+                if (seconds < 10) seconds = '0' + seconds;
+                timerElement.textContent = `${minutes}:${seconds}`;
+                
+                if (remainingTime <= 0) {
+                    clearInterval(interval);
+                    timerElement.textContent = "00:00";
+        
+                    // Exibe a mensagem de tempo expirado
+                    alert("Tempo expirado!");
+        
+                    // Atualiza a tela
+                    location.reload();
+                } else {
+                    remainingTime--;
+                }
+            }, 1000);
+        }
+
+        function copiarQRCode() {
+            const textToCopy = document.getElementById('qr_code_cp');
+            
+            textToCopy.select();
+            document.execCommand('copy');
+            alert("QrCode copiado!");
+        }
+
+        function encerrarCompra(){
+            location.reload();
+        }
+        
+        function fecharModalPagamento() {
+            document.getElementById('modalPagamento').style.display = "none";
+            window.location.reload();
+        }
+        
+        var escolha = '';
+        function escolhaModal(escolha){
+            const divReferencia = document.getElementById('divReferencia');
+            const divEndereco = document.getElementById('divEndereco');
+            
+            escolha = escolha;
+            
+            if(escolha === "mesa"){
+                divEndereco.style.display="none";
+                divReferencia.style.display="none";
+            }
+            
+            if(escolha === "delivery"){
+                divEndereco.style.display="block";
+                divReferencia.style.display="block";
+            }
+
+            
+            const total = document.getElementById('total-compraFinal').textContent;
+            document.getElementById('total-compra').textContent = total;
+            document.getElementById('modalPagamento').style.display = "block";
+            document.getElementById('modalEscolherMetodo').style.display = "none";
+            
+        }
+
+        document.getElementById('cardPayment').addEventListener('click', () => {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+            const number = document.getElementById('number').value;
+            const complement = document.getElementById('complement').value;
+            const reference = document.getElementById('reference').value;
+            const total = document.getElementById('total-compra').textContent;
+            
+            if(escolha === "mesa"){
+                if (!name || !email) {
+                    alert('Por favor, preencha todos os campos!');
+                    return;
+                }    
+            }
+            
+            if(escolha === "delivery"){
+                if (!name || !email || !address || !number || !complement) {
+                    alert('Por favor, preencha todos os campos!');
+                    return;
+                }    
+            }
+            
+        
+            const informacoesUsuario = {
+                name: name,
+                email: email,
+                address: address,
+                number: number,
+                complement: complement,
+                reference: reference,
+                total: total
+            };
+        
+            localStorage.setItem('informacoesUsuario', JSON.stringify(informacoesUsuario));
+            createPayment();
+        });
+    
+        function abrirModal() {
+        document.getElementById("modalIngredientes").style.display = "block";
+    }
+
+        function fecharModal() {
+        document.getElementById("modalIngredientes").style.display = "none";
+    }
+
+        window.onclick = function(event) {
+    const modal = document.getElementById("modalIngredientes");
+    if (event.target === modal) {
+        fecharModal();
+    }
+}
+
+    </script>
+</body>
+
+</html>

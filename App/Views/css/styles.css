@@ -1,0 +1,962 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+body {
+    user-select: none;  /* Impede a seleção de texto */
+    -webkit-user-drag: none;  /* Impede arrastar em navegadores WebKit (Chrome, Safari) */
+    -webkit-touch-callout: none;  /* Impede o menu de callout no iOS */
+}
+
+* {
+    user-select: none; /* Desativa a seleção de texto em todos os elementos */
+    -webkit-user-drag: none; /* Impede o arrasto em todos os elementos */
+    -webkit-touch-callout: none; /* Desativa o menu de callout para todos os elementos */
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.front-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.front-sidebar .brand {
+    text-align: center;
+}
+
+.front-sidebar .brand h1 {
+    color: #f7506d;
+    font-size: 2rem;
+}
+
+.front-sidebar .front-sidemenu {
+    margin-top: 1.5rem;
+}
+
+.front-sidebar .front-sidemenu li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.3rem;
+    cursor: pointer;
+}
+
+.front-sidebar .front-sidemenu li h3 {
+    color: #f7506d;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 0.5rem;
+}
+
+.front-sidebar .front-sidemenu li img {
+    width: 40px;
+    filter: invert(31%) sepia(9%) saturate(9%) hue-rotate(12deg) brightness(98%) contrast(87%);
+}
+
+.front-sidebar .front-sidemenu li.active {
+    background: linear-gradient(to right, #f7506d, #f98046);
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.front-sidebar .front-sidemenu li.active h3 {
+    color: #fff;
+    font-size: 0.8rem;
+    margin-top: 0;
+}
+
+.front-sidebar .front-sidemenu li.active img {
+    width: 30px;
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%);
+}
+
+.main-content {
+    padding: 2rem;
+    background-color: #f2f1f5;
+    margin-left: 250px;
+    outline: none;
+}
+
+h2 {
+    text-align: center;
+    color: var(--main-color);
+    margin-bottom: 2rem;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+}
+
+.menu-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    cursor: default;
+    width: 250px;
+    height: 250px;
+    text-align: center;
+    outline: none;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+.menu-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    outline: none;
+}
+
+.menu-card .card-details {
+    margin-top: 5px;
+    outline: none;
+}
+
+.menu-card .card-details h3 {
+    font-size: 1rem;
+    color: #333;
+    margin: 5px 0;
+}
+
+.menu-card .card-details p {
+    font-size: 0.9rem;
+    color: #027581;
+    font-weight: bold;
+}
+
+.menu-card:focus {
+    outline: none;
+}
+
+.addCarrinho-btn {
+    background-color: #e60000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos gerais para o footer */
+.footer {
+    position: relative;
+    width: 100%;
+    padding: 10px;
+    background-color: #f2f1f5;
+}
+
+.cart-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    z-index: 9999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-summary-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.cart-total {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #e60000;
+}
+
+.pay-btn {
+    background-color: #e60000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pay-btn:hover {
+    background-color: #e60000;
+}
+
+.modal {
+    display: none; /* Oculta por padrão */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    overflow-y: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#ingredientes-lista {
+    margin-bottom: 10px;
+}
+
+.icon-btn:hover {
+    background-color: #0056b3;
+}
+
+#ingredientes-lista {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ingrediente-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.ingrediente-nome {
+    flex: 1; 
+}
+
+.quantidade-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 10px;
+}
+
+.icon-btn {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.quantidade {
+    margin: 0 10px;
+    font-size: 16px;
+    width: 30px;
+    text-align: center;
+}
+
+.remove-btn {
+    border-radius: 4px;
+    padding: 5px 10px;
+    background-color: #f44336;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.remove-btn i {
+    margin-right: 5px;
+}
+
+.remove-btn:hover {
+    color: #d32f2f;
+}
+
+.options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+    
+#modalEscolherMetodo .cardbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    cursor: default;
+    width: 250px;
+    height: 250px;
+    text-align: center;
+    outline: none;
+    }
+#modalEscolherMetodo .cardbox:hover {
+        background-color: #ddd;
+    }
+
+#modalEscolherMetodo .cardbox h3 {
+        margin: 0;
+    }
+
+#modalEscolherMetodo .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+#modalFinalizarCompra {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#modalFinalizarCompra .modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 5px;
+    max-height: 70vh; /* Limite de altura */
+    overflow-y: auto; /* Rolagem vertical quando necessário */
+}
+
+#resumo-compra {
+    max-height: 400px; /* Ajuste o valor conforme necessário */
+    overflow-y: auto; /* Rolagem vertical para a lista de itens */
+}
+
+#modalFinalizarCompra .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#modalFinalizarCompra .modal-actions button {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+#modalFinalizarCompra .modal-actions button:first-child {
+    background-color: #ccc;
+    color: #333;
+}
+
+#modalFinalizarCompra .modal-actions button:first-child:hover {
+    background-color: #999;
+}
+
+#modalFinalizarCompra .modal-actions button:last-child {
+    background-color: #e60000;
+    color: white;
+}
+
+#modalFinalizarCompra .modal-actions button:last-child:hover {
+    background-color: #cc0000;
+}
+
+.resumo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.resumo-item p {
+    margin: 0;
+}
+
+#resumo-compra {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.item-info {
+    flex: 8;
+    text-align: left;
+    word-wrap: break-word;
+    min-width: 0;
+}
+
+.quantidade-container {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
+.remove-container {
+    flex: 1;
+    text-align: center;
+}
+
+.ingredientes-container p {
+    margin: 5px 0; 
+}
+
+.quantidade-container span {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+/* Modal de Pagamento */
+#modalPagamento {
+    display: none; /* Inicialmente a modal estará oculta */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+    z-index: 9999; /* Garante que a modal fique acima de outros elementos */
+    justify-content: center;
+    align-items: center;
+}
+
+#modalPagamento.show {
+    display: flex;
+    opacity: 1; /* Modal visível quando a classe 'show' é adicionada */
+}
+
+/* Estilo do Conteúdo da Modal */
+#modalPagamento .modal-content {
+    background-color: #fff;
+    border-radius: 15px; /* Bordas arredondadas */
+    padding: 30px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95); /* Efeito de escala inicial */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Transições suaves */
+}
+
+#modalPagamento.show .modal-content {
+    transform: scale(1); /* Modal cresce para seu tamanho normal */
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3); /* Sombra mais forte quando a modal está ativa */
+}
+
+/* Botão de Fechar */
+#modalPagamento .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+#modalPagamento .close:hover {
+    color: #f00; /* Cor vermelha ao passar o mouse */
+}
+
+/* Estilo das Linhas de Input */
+.user-info .row {
+    margin-bottom: 15px;
+}
+
+.user-info .col-md-6 {
+    margin-bottom: 15px;
+}
+
+/* Estilo dos Campos de Entrada */
+input.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 8px; /* Bordas arredondadas */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transição suave */
+}
+
+input.form-control:focus {
+    border-color: #007bff; /* Cor azul ao focar */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Sombra ao focar */
+    outline: none; /* Remove o contorno do foco */
+}
+
+/* Estilo do Botão "Colar" */
+#modalPagamento .input-group button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#modalPagamento .input-group button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra ao passar o mouse */
+}
+
+.itens-compra p {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+#countdown {
+    font-size: 20px;
+    color: red;
+    margin-top: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+#timer {
+    font-size: 1.5em;
+}
+
+.paymentData {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.paymentData h1 {
+    font-size: 1.5em;
+    color: #333;
+    text-align: center;
+}
+
+.modal-content h3{
+    text-align: center;
+}
+
+#qr_code_img {
+    max-width: 250px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#qr_code_cp {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Estilo do Botão de Pagamento */
+.payment-options {
+    text-align: center;
+}
+
+.payment-options   .payment-option {
+        
+        background-color: #28a745;
+        color: #fff;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+.payment-options .payment-option:hover {
+    background-color: #218838;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.payment-success {
+    text-align: center;
+}
+
+.payment-success-modal {        
+background-color: #28a745;
+color: #fff;
+padding: 12px 25px;
+border: none;
+border-radius: 8px;
+font-size: 1.2em;
+cursor: pointer;
+transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Responsividade: Ajuste para telas pequenas */
+@media (max-width: 768px) {
+    #modalPagamento .modal-content {
+        padding: 20px;
+    }
+
+    .user-info .row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-info .col-md-6 {
+        margin-bottom: 10px;
+    }
+
+    .payment-options .payment-option {
+        width: 100%;
+        padding: 15px;
+        font-size: 1em;
+    }
+}
+
+/* Responsividade */
+@media screen and (width: 1080px) and (height: 1920px) {
+    .main-content {
+        margin-left: 235px !important;
+    }
+    .cart-container {
+        width: 65% !important;
+        left: 60% !important;
+    }
+    .modal {
+        left: 100px !important;
+    }
+    .modal-content {
+        margin-top: 360px !important;
+    }
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 235px;
+    }
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr); /* Três colunas em dispositivos médios */
+    }
+    .cart-container {
+        width: 71%;
+        left: 640px;
+    }
+    .modal {
+        left: 120px;
+    }
+    .modal-content {
+        margin-top: 200px;
+    }
+}
+
+/* Telas menores como tablets em orientação retrato (até 768px) */
+@media (max-width: 768px) {
+    #modalIngredientes {
+    display: none; /* A modal começa oculta */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo semitransparente */
+    z-index: 1050;
+    justify-content: center;
+    align-items: center;
+}
+
+#resumo-compra {
+    max-height: calc(100vh - 495px); 
+    overflow-y: auto; /* Rolagem quando o conteúdo exceder a altura */
+}
+    /* Layout principal */
+    .main-content {
+        margin-left: 0; /* Remove a margem lateral */
+        padding: 1rem;
+        max-height: 60vh;
+    }
+
+    /* Barra lateral (front-sidebar) */
+    .front-sidebar {
+        width: 100% !important;
+        height: 150px !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 9999 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .front-sidebar .brand {
+        width: 100%!important;
+        height: 50px!important;
+        display: flex!important;
+        justify-content: center!important;
+        align-items: center!important;
+        color: #fff!important;
+        font-size: 20px!important;
+        font-weight: bold!important;
+    }
+
+    .front-sidebar .front-sidemenu {
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 0 10px;
+        margin: 0;
+        list-style: none;
+    }
+
+    .front-sidebar .front-sidemenu li {
+        display: inline-block;
+        margin: 0 10px;
+    }
+
+    .front-sidebar .front-sidemenu li a {
+        color: #fff !important;
+        text-decoration: none !important;
+        padding: 5px 15px !important;
+        background-color: #444 !important;
+        border-radius: 5px !important;
+        font-size: 14px !important;
+        text-align: center !important;
+    }
+
+    /* Ajustes no conteúdo principal */
+    .main-content {
+        margin-top: 150px !important;
+        padding: 1rem !important;
+        width: 90% !important;
+    }
+
+    /* Cart container */
+    .cart-container {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90% !important;
+    }
+
+    .cart-items {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        width: 100%;
+    }
+
+    /* Modal */
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1050;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        width: 90%;
+        max-width: 350px;
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        margin-top: 157px; /* Garante que a modal esteja no centro */
+    }
+
+    .modal-header {
+        font-size: 1.2rem;
+        font-weight: bold;
+        position: relative;
+        padding-right: 30px;
+    }
+
+    .modal-header .close-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .modal-body {
+        max-height: calc(80vh - 100px);
+        overflow-y: auto;
+    }
+
+    /* Ajuste da lista na modal */
+    .modal-body ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        max-height: calc(80vh - 150px);
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        text-align: center;
+        padding: 10px;
+    }
+
+    /* Ajuste do botão de pagamento no carrinho */
+    .cart-actions .pay-btn {
+        width: 100% !important;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .cart-summary-section {
+        width: 100%;
+        padding: 10px;
+        margin-left: 0;
+        height: 6vh;
+    }
+
+    /* Remover borda azul de seleção nos cards */
+    .menu-card:focus {
+        outline: none;
+    }
+
+    /* Ajustes nos cards */
+    .menu-card {
+        cursor: pointer;
+        width: 100% !important;
+        height: auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 1920px) {
+    .main-content {
+        margin-left: 300px; /* Margem maior para telas ultra grandes */
+    }
+    .menu-grid {
+        grid-template-columns: repeat(5, 1fr); /* Cinco colunas */
+    }
+    .menu-card {
+        width: 70%;
+        height: auto;
+    }
+    .cart-container {
+        width: 40%; /* Largura ajustada */
+    }
+    .modal {
+        left: 250px;
+    }
+    .modal-content {
+        margin-top: 300px;
+    }
+    
+    #modalFinalizarCompra .modal-content {
+        max-height: 85vh;
+        margin-top: 5%;
+    }
+}
